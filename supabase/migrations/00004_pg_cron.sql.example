@@ -1,0 +1,16 @@
+-- Apply manually in the Supabase SQL editor AFTER deploying to Vercel.
+-- Replace <APP_URL> and <CRON_SECRET> with real values.
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
+
+select cron.schedule(
+  'fantasmeo-gmail-sync',
+  '*/15 * * * *',
+  $$
+  select net.http_post(
+    url := '<APP_URL>/api/cron/gmail-sync',
+    headers := '{"Authorization": "Bearer <CRON_SECRET>", "Content-Type": "application/json"}'::jsonb,
+    body := '{}'::jsonb
+  );
+  $$
+);
