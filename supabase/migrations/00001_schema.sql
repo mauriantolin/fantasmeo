@@ -124,6 +124,8 @@ create table public.gmail_connections (
 create index applications_user_status_idx on public.applications (user_id, status);
 create index application_events_application_idx on public.application_events (application_id, occurred_at desc);
 create index matched_emails_user_status_idx on public.matched_emails (user_id, match_status);
+create index application_events_email_idx on public.application_events (email_id) where email_id is not null;
+create index generated_cvs_base_cv_idx on public.generated_cvs (base_cv_id) where base_cv_id is not null;
 
 -- updated_at trigger ----------------------------------------------------
 create or replace function public.set_updated_at()

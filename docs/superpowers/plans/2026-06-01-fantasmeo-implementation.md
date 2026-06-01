@@ -2803,4 +2803,19 @@ git commit -m "docs: add README with setup and deployment guide"
 
 - **Real credentials needed at:** Task 3 (Supabase project), Task 5 manual verification (Google sign-in), Task 7 manual verification (AI Gateway key), Task 20+ (Google Cloud OAuth client). Code can always be written and unit-tested without them; only manual verification steps block on credentials.
 - **Order constraints:** Tasks 1→8 sequential. Tasks 9, 10, 14, 19 are independent of each other (parallelizable after Task 8). Task 11 needs 9+10. Task 12 needs 11. Task 15 needs 14. Task 16 needs 2. Task 17 needs 15+16. Tasks 20-21 need 19. Task 22 needs 21. Tasks 24-27 need everything before them.
+
+---
+
+## Plan deviations (discovered during execution)
+
+### Deviation 1: invites table is service-role-only (security fix, 2026-06-01)
+
+Code review of Task 3 found that the original invites RLS policies (any authenticated user can insert/update) allow an uninvited user to forge an invite for themselves before the invite gate signs them out, bypassing the gate entirely.
+
+**Change:** `00002_rls.sql` defines NO policies for `invites` (deny-all for clients). All invite operations go through the service-role client:
+
+- **Task 5 (auth callback):** the invite gate must use `createAdminClient()` (not the session client) to read invites and mark `used_at`.
+- **Task 22 (settings):** `addInvite` and the invites list must use `createAdminClient()` after verifying the logged-in user is the owner (`user.email === process.env.OWNER_EMAIL`).
+
+Additionally, all `auth.uid()` calls in RLS policies are wrapped as `(select auth.uid())` (Supabase performance best practice), and two FK indexes were added (`application_events.email_id`, `generated_cvs.base_cv_id`).
 - **AI calls in dev:** every AI function reads `AI_GATEWAY_API_KEY` from env. Get one at vercel.com → AI Gateway → API keys (free tier available).
