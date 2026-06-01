@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "sonner";
+
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +14,13 @@ import {
 
 async function signInWithGoogle() {
   const supabase = createClient();
-  await supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: `${location.origin}/auth/callback` },
   });
+  if (error) {
+    toast.error("No se pudo iniciar sesión, probá de nuevo.");
+  }
 }
 
 export default function LoginPage() {
