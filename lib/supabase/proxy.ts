@@ -32,6 +32,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/auth");
+  // API routes are excluded — each Route Handler is responsible for its own auth checks.
   const isApiRoute = request.nextUrl.pathname.startsWith("/api");
 
   if (!user && !isAuthRoute && !isApiRoute && request.nextUrl.pathname !== "/") {
