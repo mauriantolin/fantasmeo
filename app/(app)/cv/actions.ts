@@ -65,6 +65,7 @@ export async function uploadAndParseCV(formData: FormData) {
 }
 
 export async function updateCVContent(id: string, content: unknown) {
+  z.string().uuid().parse(id);
   const { supabase } = await getAuthenticatedUser();
 
   const validated = cvContentSchema.parse(content);
@@ -98,6 +99,7 @@ export async function toggleCVActive(id: string, isActive: boolean) {
 }
 
 export async function deleteCV(id: string) {
+  z.string().uuid().parse(id);
   const { supabase } = await getAuthenticatedUser();
 
   const { data: row, error: fetchError } = await supabase

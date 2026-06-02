@@ -17,132 +17,167 @@ interface CVEditorProps {
   onSave: (content: CVContent) => Promise<void>;
 }
 
+// Internal wrappers keep stable keys and raw text separate from CVContent data.
+interface Keyed<T> { key: string; value: T }
+interface KeyedSkill { key: string; value: CVSkillGroup; itemsText: string }
+
+function wrap<T>(items: T[]): Keyed<T>[] {
+  return items.map((value) => ({ key: crypto.randomUUID(), value }));
+}
+
+function wrapSkills(items: CVSkillGroup[]): KeyedSkill[] {
+  return items.map((value) => ({
+    key: crypto.randomUUID(),
+    value,
+    itemsText: value.items.join(", "),
+  }));
+}
+
+function unwrap<T>(items: Keyed<T>[]): T[] {
+  return items.map((item) => item.value);
+}
+
+function unwrapSkills(items: KeyedSkill[]): CVSkillGroup[] {
+  return items.map(({ itemsText, value }) => ({
+    ...value,
+    items: itemsText.split(",").map((s) => s.trim()).filter(Boolean),
+  }));
+}
+
 export function CVEditor({ initialContent, onSave }: CVEditorProps) {
-  const [content, setContent] = useState<CVContent>(initialContent);
+  const [contact, setContact] = useState(initialContent.contact);
+  const [summary, setSummary] = useState(initialContent.summary ?? "");
+  const [experience, setExperience] = useState<Keyed<CVExperience>[]>(() => wrap(initialContent.experience));
+  const [education, setEducation] = useState<Keyed<CVEducation>[]>(() => wrap(initialContent.education));
+  const [skills, setSkills] = useState<KeyedSkill[]>(() => wrapSkills(initialContent.skills));
+  const [languages, setLanguages] = useState<Keyed<CVLanguage>[]>(() => wrap(initialContent.languages));
+  const [certifications, setCertifications] = useState<Keyed<CVCertification>[]>(() => wrap(initialContent.certifications));
   const [isSaving, setIsSaving] = useState(false);
 
-  // --- helpers ---
+  // --- contact ---
   function updateContact(field: keyof CVContent["contact"], value: string) {
-    setContent((prev) => ({
-      ...prev,
-      contact: { ...prev.contact, [field]: value },
-    }));
+    setContact((prev) => ({ ...prev, [field]: value }));
   }
 
+  // --- experience ---
   function updateExperience(index: number, field: keyof CVExperience, value: string | string[] | null) {
-    setContent((prev) => {
-      const updated = [...prev.experience];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, experience: updated };
+    setExperience((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: { ...updated[index].value, [field]: value } };
+      return updated;
     });
   }
 
   function addExperience() {
-    setContent((prev) => ({
+    setExperience((prev) => [
       ...prev,
-      experience: [
-        ...prev.experience,
-        { company: "", title: "", start: "", end: null, location: "", bullets: [] },
-      ],
-    }));
+      { key: crypto.randomUUID(), value: { company: "", title: "", start: "", end: null, location: "", bullets: [] } },
+    ]);
   }
 
   function removeExperience(index: number) {
-    setContent((prev) => ({
-      ...prev,
-      experience: prev.experience.filter((_, i) => i !== index),
-    }));
+    setExperience((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // --- education ---
   function updateEducation(index: number, field: keyof CVEducation, value: string) {
-    setContent((prev) => {
-      const updated = [...prev.education];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, education: updated };
+    setEducation((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: { ...updated[index].value, [field]: value } };
+      return updated;
     });
   }
 
   function addEducation() {
-    setContent((prev) => ({
+    setEducation((prev) => [
       ...prev,
-      education: [...prev.education, { institution: "", degree: "", start: "", end: "" }],
-    }));
+      { key: crypto.randomUUID(), value: { institution: "", degree: "", start: "", end: "" } },
+    ]);
   }
 
   function removeEducation(index: number) {
-    setContent((prev) => ({
-      ...prev,
-      education: prev.education.filter((_, i) => i !== index),
-    }));
+    setEducation((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function updateSkill(index: number, field: keyof CVSkillGroup, value: string | string[]) {
-    setContent((prev) => {
-      const updated = [...prev.skills];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, skills: updated };
+  // --- skills ---
+  function updateSkillCategory(index: number, value: string) {
+    setSkills((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: { ...updated[index].value, category: value } };
+      return updated;
+    });
+  }
+
+  function updateSkillItemsText(index: number, text: string) {
+    setSkills((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], itemsText: text };
+      return updated;
     });
   }
 
   function addSkill() {
-    setContent((prev) => ({
+    setSkills((prev) => [
       ...prev,
-      skills: [...prev.skills, { category: "", items: [] }],
-    }));
+      { key: crypto.randomUUID(), value: { category: "", items: [] }, itemsText: "" },
+    ]);
   }
 
   function removeSkill(index: number) {
-    setContent((prev) => ({
-      ...prev,
-      skills: prev.skills.filter((_, i) => i !== index),
-    }));
+    setSkills((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // --- languages ---
   function updateLanguage(index: number, field: keyof CVLanguage, value: string) {
-    setContent((prev) => {
-      const updated = [...prev.languages];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, languages: updated };
+    setLanguages((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: { ...updated[index].value, [field]: value } };
+      return updated;
     });
   }
 
   function addLanguage() {
-    setContent((prev) => ({
+    setLanguages((prev) => [
       ...prev,
-      languages: [...prev.languages, { name: "", level: "" }],
-    }));
+      { key: crypto.randomUUID(), value: { name: "", level: "" } },
+    ]);
   }
 
   function removeLanguage(index: number) {
-    setContent((prev) => ({
-      ...prev,
-      languages: prev.languages.filter((_, i) => i !== index),
-    }));
+    setLanguages((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // --- certifications ---
   function updateCertification(index: number, field: keyof CVCertification, value: string) {
-    setContent((prev) => {
-      const updated = [...prev.certifications];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, certifications: updated };
+    setCertifications((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: { ...updated[index].value, [field]: value } };
+      return updated;
     });
   }
 
   function addCertification() {
-    setContent((prev) => ({
+    setCertifications((prev) => [
       ...prev,
-      certifications: [...prev.certifications, { name: "", issuer: "", year: "" }],
-    }));
+      { key: crypto.randomUUID(), value: { name: "", issuer: "", year: "" } },
+    ]);
   }
 
   function removeCertification(index: number) {
-    setContent((prev) => ({
-      ...prev,
-      certifications: prev.certifications.filter((_, i) => i !== index),
-    }));
+    setCertifications((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // --- save ---
   async function handleSave() {
+    const content: CVContent = {
+      contact,
+      summary,
+      experience: unwrap(experience),
+      education: unwrap(education),
+      skills: unwrapSkills(skills),
+      languages: unwrap(languages),
+      certifications: unwrap(certifications),
+    };
     setIsSaving(true);
     try {
       await onSave(content);
@@ -173,7 +208,7 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
               </Label>
               <Input
                 id={`contact-${field}`}
-                value={content.contact[field] ?? ""}
+                value={contact[field] ?? ""}
                 onChange={(e) => updateContact(field, e.target.value)}
               />
             </div>
@@ -189,8 +224,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
         <CardContent>
           <Textarea
             rows={4}
-            value={content.summary ?? ""}
-            onChange={(e) => setContent((prev) => ({ ...prev, summary: e.target.value }))}
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
             placeholder="Breve presentación profesional…"
           />
         </CardContent>
@@ -205,8 +240,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
           </Button>
         </CardHeader>
         <CardContent className="space-y-6">
-          {content.experience.map((exp, i) => (
-            <div key={i} className="space-y-3">
+          {experience.map(({ key, value: exp }, i) => (
+            <div key={key} className="space-y-3">
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
@@ -261,8 +296,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
           </Button>
         </CardHeader>
         <CardContent className="space-y-6">
-          {content.education.map((edu, i) => (
-            <div key={i} className="space-y-3">
+          {education.map(({ key, value: edu }, i) => (
+            <div key={key} className="space-y-3">
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
@@ -299,23 +334,21 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {content.skills.map((sg, i) => (
-            <div key={i} className="space-y-2">
+          {skills.map(({ key, value: sg, itemsText }, i) => (
+            <div key={key} className="space-y-2">
               {i > 0 && <Separator />}
               <div className="space-y-1">
                 <Label>Categoría</Label>
                 <Input
                   value={sg.category}
-                  onChange={(e) => updateSkill(i, "category", e.target.value)}
+                  onChange={(e) => updateSkillCategory(i, e.target.value)}
                 />
               </div>
               <div className="space-y-1">
                 <Label>Habilidades (separadas por coma)</Label>
                 <Input
-                  value={sg.items.join(", ")}
-                  onChange={(e) =>
-                    updateSkill(i, "items", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))
-                  }
+                  value={itemsText}
+                  onChange={(e) => updateSkillItemsText(i, e.target.value)}
                 />
               </div>
               <Button variant="ghost" size="sm" onClick={() => removeSkill(i)}>
@@ -335,8 +368,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {content.languages.map((lang, i) => (
-            <div key={i} className="space-y-2">
+          {languages.map(({ key, value: lang }, i) => (
+            <div key={key} className="space-y-2">
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
@@ -365,8 +398,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {content.certifications.map((cert, i) => (
-            <div key={i} className="space-y-2">
+          {certifications.map(({ key, value: cert }, i) => (
+            <div key={key} className="space-y-2">
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="space-y-1">
