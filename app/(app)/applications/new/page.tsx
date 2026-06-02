@@ -28,6 +28,18 @@ const PLATFORMS = [
   "Otra",
 ] as const;
 
+function inferPlatformFromUrl(rawUrl: string): string {
+  try {
+    const { hostname } = new URL(rawUrl);
+    if (hostname.includes("linkedin.com")) return "LinkedIn";
+    if (hostname.includes("indeed.com")) return "Indeed";
+    if (hostname.includes("glassdoor.com")) return "Glassdoor";
+  } catch {
+    // invalid URL — fall through
+  }
+  return "Otra";
+}
+
 interface PreviewData {
   jdText: string;
   jdSummary: JDSummary;
@@ -87,6 +99,10 @@ export default function NewApplicationPage() {
     setCompanyName(data.jdSummary.company ?? "");
     setPositionTitle(data.jdSummary.position ?? "");
     setSeniority(data.jdSummary.seniority ?? "");
+    // If platform not yet set (URL flow), infer from URL or fall back to "Otra"
+    if (!platform) {
+      setPlatform(url ? inferPlatformFromUrl(url) : "Otra");
+    }
     setStep("preview");
   }
 
@@ -242,6 +258,22 @@ export default function NewApplicationPage() {
             />
           </div>
 
+          <div className="space-y-1.5">
+            <Label htmlFor="platform-preview">Plataforma</Label>
+            <Select value={platform} onValueChange={setPlatform} disabled={isPending}>
+              <SelectTrigger id="platform-preview">
+                <SelectValue placeholder="Seleccioná la plataforma" />
+              </SelectTrigger>
+              <SelectContent>
+                {PLATFORMS.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {preview.jdSummary.required_skills.length > 0 && (
             <div className="space-y-1.5">
               <Label>Skills requeridas</Label>
@@ -294,7 +326,7 @@ export default function NewApplicationPage() {
 
         <Button
           onClick={handleCreate}
-          disabled={isPending || !companyName || !positionTitle}
+          disabled={isPending || !companyName || !positionTitle || !platform}
           className="w-full"
         >
           {isPending ? "Creando postulación..." : "Crear postulación"}
