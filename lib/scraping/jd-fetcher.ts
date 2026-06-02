@@ -19,7 +19,7 @@ export function extractReadableText(html: string, url: string): string {
 
   if (text.length < MIN_JD_LENGTH) {
     throw new ScrapeError(
-      "Could not extract a job description from this page (login wall or blocked)."
+      `Could not extract a job description from ${url} (login wall or blocked).`
     );
   }
   return text;
