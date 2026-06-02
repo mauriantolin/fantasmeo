@@ -13,15 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { ApplicationRow, ApplicationEvent } from "@/lib/types";
+import type { ApplicationRow, ApplicationEvent, CVContent } from "@/lib/types";
 import { StatusDropdown } from "./status-dropdown";
 import { AddNoteForm } from "./add-note-form";
+import { GenerationPanel } from "./generation-panel";
 
 export default async function ApplicationDetailPage({
   params,
@@ -31,7 +26,13 @@ export default async function ApplicationDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: application }, { data: events }] = await Promise.all([
+  const [
+    { data: application },
+    { data: events },
+    { data: baseCVs },
+    { data: generatedCVs },
+    { data: coverLetters },
+  ] = await Promise.all([
     supabase
       .from("applications")
       .select(
@@ -45,6 +46,20 @@ export default async function ApplicationDetailPage({
       .eq("application_id", id)
       .order("occurred_at", { ascending: false })
       .returns<ApplicationEvent[]>(),
+    supabase
+      .from("base_cvs")
+      .select("id, title, language")
+      .eq("is_active", true),
+    supabase
+      .from("generated_cvs")
+      .select("id, ghost_level, content, created_at")
+      .eq("application_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("cover_letters")
+      .select("id, content, created_at")
+      .eq("application_id", id)
+      .order("created_at", { ascending: false }),
   ]);
 
   if (!application) notFound();
@@ -184,47 +199,12 @@ export default async function ApplicationDetailPage({
             </Card>
           )}
 
-          {/* Placeholder: CV adaptado */}
-          <Card>
-            <CardHeader className="border-b">
-              <CardTitle>CV adaptado</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-block">
-                      <Button size="sm" disabled>
-                        Generar CV
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>Próximamente</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardContent>
-          </Card>
-
-          {/* Placeholder: Cover letter */}
-          <Card>
-            <CardHeader className="border-b">
-              <CardTitle>Cover letter</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-block">
-                      <Button size="sm" disabled>
-                        Generar cover letter
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>Próximamente</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardContent>
-          </Card>
+          <GenerationPanel
+            applicationId={application.id}
+            baseCVs={baseCVs ?? []}
+            generatedCVs={(generatedCVs ?? []) as { id: string; ghost_level: number; content: CVContent; created_at: string }[]}
+            coverLetters={coverLetters ?? []}
+          />
         </div>
       </div>
     </div>
