@@ -107,8 +107,12 @@ function CVCard({
   }
 
   async function handleSaveCV(cvId: string, content: CVContent) {
-    await updateGeneratedCV({ id: cvId, content });
-    setEditingCvId(null);
+    try {
+      await updateGeneratedCV({ id: cvId, content });
+      setEditingCvId(null);
+    } catch {
+      toast.error("No se pudo guardar, probá de nuevo");
+    }
   }
 
   return (
