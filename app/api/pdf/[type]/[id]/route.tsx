@@ -8,7 +8,7 @@ import { CoverLetterPDF } from "@/lib/pdf/cover-letter-pdf";
 import type { CVContent, JDSummary } from "@/lib/types";
 
 function sanitizeFilename(name: string): string {
-  return name.replace(/"/g, "'");
+  return name.replace(/["\\\r\n]/g, " ").trim();
 }
 
 export async function GET(
