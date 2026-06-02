@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   SquaresFourIcon,
@@ -8,6 +9,7 @@ import {
   GearIcon,
   SignOutIcon,
 } from "@phosphor-icons/react";
+import { toast } from "sonner";
 
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -31,7 +33,11 @@ export function AppSidebar({ userEmail }: AppSidebarProps) {
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("No se pudo cerrar sesión, probá de nuevo.");
+      return;
+    }
     router.push("/login");
   }
 
@@ -53,20 +59,21 @@ export function AppSidebar({ userEmail }: AppSidebarProps) {
       <nav className="flex-1 overflow-y-auto px-2 py-3" aria-label="Navegación principal">
         <ul className="space-y-0.5">
           {NAV_ITEMS.map(({ label, href, Icon }) => {
-            const isActive = pathname.startsWith(href);
+            const isActive = pathname === href || pathname.startsWith(href + "/");
             return (
               <li key={href}>
                 <Button
+                  asChild
                   variant={isActive ? "secondary" : "ghost"}
                   className={cn(
                     "w-full justify-start gap-2 text-left",
                     isActive && "font-medium"
                   )}
-                  onClick={() => router.push(href)}
-                  aria-current={isActive ? "page" : undefined}
                 >
-                  <Icon className="size-4 shrink-0" />
-                  {label}
+                  <Link href={href} aria-current={isActive ? "page" : undefined}>
+                    <Icon className="size-4 shrink-0" />
+                    {label}
+                  </Link>
                 </Button>
               </li>
             );
