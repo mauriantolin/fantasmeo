@@ -92,3 +92,27 @@ export interface EmailMatchResult {
   classification: EmailClassificationType;
   summary: string; // one-line summary in Spanish for the timeline
 }
+
+export interface ApplicationEvent {
+  id: string;
+  type: EventType;
+  title: string;
+  description: string | null;
+  metadata: Record<string, unknown> | null;
+  occurred_at: string;
+}
+
+export interface ApplicationRow {
+  id: string;
+  company_name: string;
+  position_title: string;
+  platform: string;
+  job_url: string | null;
+  jd_text: string | null;
+  jd_summary: JDSummary | null;
+  status: ApplicationStatus;
+  applied_at: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
