@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { UploadCVDialog } from "./upload-cv-dialog";
 import { DeleteCVButton } from "./delete-cv-button";
+import { ToggleCVActiveButton } from "./toggle-cv-active-button";
 
 export default async function CVPage() {
   const supabase = await createClient();
@@ -24,7 +25,7 @@ export default async function CVPage() {
 
   const { data: cvs } = await supabase
     .from("base_cvs")
-    .select("id, title, language, updated_at")
+    .select("id, title, language, is_active, updated_at")
     .eq("user_id", user!.id)
     .order("updated_at", { ascending: false });
 
@@ -55,13 +56,14 @@ export default async function CVPage() {
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex items-center justify-between">
                 <p className="text-muted-foreground text-xs">
                   Actualizado{" "}
                   {format(new Date(cv.updated_at), "d MMM yyyy", {
                     locale: es,
                   })}
                 </p>
+                <ToggleCVActiveButton id={cv.id} isActive={cv.is_active} />
               </CardContent>
               <CardFooter className="flex gap-2">
                 <Button asChild variant="outline" size="sm" className="flex-1">

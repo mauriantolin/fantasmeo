@@ -78,6 +78,25 @@ export async function updateCVContent(id: string, content: unknown) {
   revalidatePath(`/cv/${id}`);
 }
 
+const toggleActiveSchema = z.object({
+  id: z.string().uuid(),
+  isActive: z.boolean(),
+});
+
+export async function toggleCVActive(id: string, isActive: boolean) {
+  const { supabase } = await getAuthenticatedUser();
+
+  const validated = toggleActiveSchema.parse({ id, isActive });
+
+  const { error } = await supabase
+    .from("base_cvs")
+    .update({ is_active: validated.isActive })
+    .eq("id", validated.id);
+  if (error) throw error;
+
+  revalidatePath("/cv");
+}
+
 export async function deleteCV(id: string) {
   const { supabase } = await getAuthenticatedUser();
 
