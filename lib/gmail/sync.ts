@@ -197,7 +197,7 @@ export async function syncConnection(
   return result;
 }
 
-function classificationTitle(classification: string): string {
+export function classificationTitle(classification: string): string {
   switch (classification) {
     case "rejection": return "Rechazo recibido";
     case "interview": return "Invitación a entrevista";
@@ -207,7 +207,7 @@ function classificationTitle(classification: string): string {
   }
 }
 
-function suggestedStatus(classification: string): string | null {
+export function suggestedStatus(classification: string): string | null {
   switch (classification) {
     case "rejection": return "rejected";
     case "interview": return "interview";
