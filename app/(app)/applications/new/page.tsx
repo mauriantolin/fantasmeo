@@ -18,7 +18,7 @@ import {
 import { previewFromUrl, previewFromText, createApplication } from "../actions";
 import type { JDSummary } from "@/lib/types";
 
-type Step = "input" | "preview" | "confirm";
+type Step = "input" | "preview";
 
 const PLATFORMS = [
   "LinkedIn",
@@ -65,16 +65,20 @@ export default function NewApplicationPage() {
   function handleReadUrl() {
     if (!url) return;
     startTransition(async () => {
-      const result = await previewFromUrl({ url });
-      if ("error" in result && result.error === "scrape_failed") {
-        setShowManual(true);
-        toast.error(
-          "No pudimos leer el aviso (la página lo bloquea). Pegá el texto acá."
-        );
-        return;
-      }
-      if ("jdSummary" in result) {
-        populatePreview(result as PreviewData);
+      try {
+        const result = await previewFromUrl({ url });
+        if ("error" in result && result.error === "scrape_failed") {
+          setShowManual(true);
+          toast.error(
+            "No pudimos leer el aviso (la página lo bloquea). Pegá el texto acá."
+          );
+          return;
+        }
+        if ("jdSummary" in result) {
+          populatePreview(result as PreviewData);
+        }
+      } catch {
+        toast.error("Error al leer el aviso. Intentá de nuevo.");
       }
     });
   }
