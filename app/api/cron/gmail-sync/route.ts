@@ -7,7 +7,9 @@ export const maxDuration = 300; // Fluid Compute allows up to 300s on Hobby
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  // The explicit !secret guard prevents "Bearer undefined" from passing when the env var is missing
+  if (!secret || authHeader !== `Bearer ${secret}`) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 

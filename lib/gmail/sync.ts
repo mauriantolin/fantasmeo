@@ -66,16 +66,21 @@ export async function syncConnection(
     refresh_token: decrypt(connection.refresh_token_enc),
   });
 
-  // Persist refreshed access tokens
-  oauth.on("tokens", async (tokens) => {
+  // Persist refreshed access tokens. The event emitter discards the listener's promise,
+  // so failures must be caught here — best-effort persistence, never an unhandled rejection.
+  oauth.on("tokens", (tokens) => {
     if (tokens.access_token) {
-      await admin
+      void admin
         .from("gmail_connections")
         .update({
           access_token_enc: encrypt(tokens.access_token),
           token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
         })
-        .eq("id", connection.id);
+        .eq("id", connection.id)
+        .then(
+          () => undefined,
+          (error: unknown) => console.error("Failed to persist refreshed Gmail token", error)
+        );
     }
   });
 
