@@ -5,6 +5,12 @@ import { syncConnection } from "@/lib/gmail/sync";
 export const runtime = "nodejs";
 export const maxDuration = 300; // Fluid Compute allows up to 300s on Hobby
 
+// Any application with status='applied' that has received an email will have
+// its status changed away from 'applied' by the sync logic in sync.ts
+// (suggestedStatus). So status='applied' + old applied_at is sufficient to
+// identify ghosted applications — no need to check for absence of email events.
+const GHOSTED_AFTER_DAYS = 21;
+
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
   const secret = process.env.CRON_SECRET;
@@ -39,5 +45,25 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({ synced: results.length, results });
+  const cutoff = new Date(Date.now() - GHOSTED_AFTER_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: staleApps } = await admin
+    .from("applications")
+    .select("id, user_id")
+    .eq("status", "applied")
+    .lt("applied_at", cutoff);
+
+  for (const app of staleApps ?? []) {
+    await admin.from("applications").update({ status: "ghosted" }).eq("id", app.id);
+    await admin.from("application_events").insert({
+      application_id: app.id,
+      user_id: app.user_id,
+      type: "status_changed",
+      title: "Marcada como ghosteada 👻",
+      description: `${GHOSTED_AFTER_DAYS} días sin respuesta`,
+      metadata: { new_status: "ghosted", auto: true },
+    });
+  }
+
+  return NextResponse.json({ synced: results.length, results, ghosted: staleApps?.length ?? 0 });
 }
