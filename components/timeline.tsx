@@ -53,7 +53,7 @@ export function Timeline({ events }: TimelineProps) {
             </div>
 
             {/* content */}
-            <div className={`min-w-0 pb-5 ${isLast ? "pb-0" : ""}`}>
+            <div className={`min-w-0 ${isLast ? "pb-0" : "pb-5"}`}>
               <p className="text-xs font-medium leading-7">{event.title}</p>
               {event.description && (
                 <p className="mt-0.5 text-xs text-muted-foreground">
