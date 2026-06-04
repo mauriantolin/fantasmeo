@@ -104,37 +104,28 @@ export default async function ApplicationDetailPage({
         </div>
       </div>
 
-      {/* Two-column body */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        {/* Left: timeline + add note */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader className="border-b">
-              <CardTitle>Historial</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <Timeline events={timeline} />
-            </CardContent>
-          </Card>
+      {/* Body: generation tools take the wide column; context sits aside */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        {/* Main: CV + cover letter — the preview needs room to breathe */}
+        <section aria-label="CV y carta de presentación" className="space-y-4">
+          <GenerationPanel
+            applicationId={application.id}
+            baseCVs={baseCVs ?? []}
+            generatedCVs={(generatedCVs ?? []) as { id: string; ghost_level: number; content: CVContent; created_at: string }[]}
+            coverLetters={coverLetters ?? []}
+          />
+        </section>
 
-          <Card>
-            <CardHeader className="border-b">
-              <CardTitle>Agregar nota</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <AddNoteForm applicationId={application.id} />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right: JD summary + placeholder cards */}
-        <div className="space-y-4">
+        {/* Aside: context + tracking — reads fine in a narrow column */}
+        <aside aria-label="Contexto y seguimiento" className="space-y-4">
           {jd && (
             <Card>
               <CardHeader className="border-b">
-                <CardTitle>Descripción del puesto</CardTitle>
+                <CardTitle role="heading" aria-level={2}>
+                  Descripción del puesto
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 pt-4">
+              <CardContent className="space-y-4 pt-4">
                 {jd.seniority && (
                   <div>
                     <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -149,9 +140,9 @@ export default async function ApplicationDetailPage({
                     <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Skills requeridos
                     </p>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {jd.required_skills.map((s) => (
-                        <Badge key={s} variant="secondary" className="text-xs">
+                        <Badge key={s} variant="secondary">
                           {s}
                         </Badge>
                       ))}
@@ -164,9 +155,9 @@ export default async function ApplicationDetailPage({
                     <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Deseables
                     </p>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {jd.nice_to_have.map((s) => (
-                        <Badge key={s} variant="outline" className="text-xs">
+                        <Badge key={s} variant="outline">
                           {s}
                         </Badge>
                       ))}
@@ -199,13 +190,28 @@ export default async function ApplicationDetailPage({
             </Card>
           )}
 
-          <GenerationPanel
-            applicationId={application.id}
-            baseCVs={baseCVs ?? []}
-            generatedCVs={(generatedCVs ?? []) as { id: string; ghost_level: number; content: CVContent; created_at: string }[]}
-            coverLetters={coverLetters ?? []}
-          />
-        </div>
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle role="heading" aria-level={2}>
+                Historial
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Timeline events={timeline} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle role="heading" aria-level={2}>
+                Agregar nota
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <AddNoteForm applicationId={application.id} />
+            </CardContent>
+          </Card>
+        </aside>
       </div>
     </div>
   );

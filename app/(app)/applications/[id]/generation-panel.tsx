@@ -90,15 +90,21 @@ function CVCard({
   const [isPending, startTransition] = useTransition();
   const [showNewVersion, setShowNewVersion] = useState(false);
   const [editingCvId, setEditingCvId] = useState<string | null>(null);
+  const [activeCvId, setActiveCvId] = useState<string | undefined>(
+    generatedCVs[0]?.id
+  );
 
   function handleGenerate() {
     startTransition(async () => {
       try {
-        await generateTailoredCV({
+        const { id } = await generateTailoredCV({
           applicationId,
           baseCvId: selectedBaseCv,
           ghostLevel,
         });
+        // Surface the freshly generated version instead of leaving the
+        // previously selected tab active.
+        setActiveCvId(id);
         setShowNewVersion(false);
       } catch {
         toast.error("No se pudo generar, probá de nuevo");
@@ -118,7 +124,9 @@ function CVCard({
   return (
     <Card>
       <CardHeader className="border-b">
-        <CardTitle>CV adaptado</CardTitle>
+        <CardTitle role="heading" aria-level={2}>
+          CV adaptado
+        </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
         {generatedCVs.length === 0 ? (
@@ -162,7 +170,7 @@ function CVCard({
           </div>
         ) : (
           <div className="space-y-4">
-            <Tabs defaultValue={generatedCVs[0].id}>
+            <Tabs value={activeCvId} onValueChange={setActiveCvId}>
               <TabsList className="flex-wrap h-auto gap-1">
                 {generatedCVs.map((cv) => {
                   const band = getGhostBand(cv.ghost_level);
@@ -316,7 +324,9 @@ function CoverLetterCard({
   return (
     <Card>
       <CardHeader className="border-b">
-        <CardTitle>Cover letter</CardTitle>
+        <CardTitle role="heading" aria-level={2}>
+          Cover letter
+        </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
         {coverLetters.length === 0 ? (

@@ -35,14 +35,19 @@ export function GhostSlider({ value, onChange }: GhostSliderProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className={BAND_EMOJI_SIZE[band]}>👻</span>
-          <span className={`text-sm font-medium ${BAND_COLORS[band]}`}>
+          <span className={BAND_EMOJI_SIZE[band]} aria-hidden="true">
+            👻
+          </span>
+          <span className={`text-sm font-semibold ${BAND_COLORS[band]}`}>
             {GHOST_BAND_LABELS[band]}
           </span>
         </div>
-        <span className="text-xs text-muted-foreground">{value}</span>
+        <span className="text-sm font-semibold tabular-nums text-foreground">
+          {value}
+          <span className="text-muted-foreground">/100</span>
+        </span>
       </div>
 
       <Slider
@@ -55,7 +60,9 @@ export function GhostSlider({ value, onChange }: GhostSliderProps) {
         aria-valuetext={`${GHOST_BAND_LABELS[band]}, ${value} de 100`}
       />
 
-      <p className="text-xs text-muted-foreground">{BAND_DESCRIPTIONS[band]}</p>
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        {BAND_DESCRIPTIONS[band]}
+      </p>
     </div>
   );
 }

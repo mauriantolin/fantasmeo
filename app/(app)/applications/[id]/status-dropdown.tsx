@@ -66,6 +66,7 @@ export function StatusDropdown({
           size="sm"
           disabled={isPending}
           className="gap-1.5"
+          aria-label={`Cambiar estado (actual: ${STATUS_LABELS[currentStatus]})`}
         >
           {STATUS_LABELS[currentStatus]}
           <CaretDownIcon className="size-3" />
