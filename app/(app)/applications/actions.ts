@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { fetchJD, ScrapeError } from "@/lib/scraping/jd-fetcher";
 import { parseJD } from "@/lib/ai/parse-jd";
@@ -100,7 +99,9 @@ export async function createApplication(input: z.infer<typeof createApplicationI
   }
 
   revalidatePath("/applications");
-  redirect(`/applications/${application.id}`);
+  // Navigation is done client-side so a server redirect doesn't surface as a
+  // caught error in the caller's try/catch.
+  return { id: application.id };
 }
 
 const updateStatusInput = z.object({
@@ -176,5 +177,4 @@ export async function deleteApplication(input: z.infer<typeof deleteInput>) {
   const { error } = await supabase.from("applications").delete().eq("id", parsed.applicationId);
   if (error) throw new Error(error.message);
   revalidatePath("/applications");
-  redirect("/applications");
 }

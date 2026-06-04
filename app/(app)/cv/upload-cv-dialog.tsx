@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Upload } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ interface UploadCVDialogProps {
 }
 
 export function UploadCVDialog({ trigger }: UploadCVDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -35,9 +37,9 @@ export function UploadCVDialog({ trigger }: UploadCVDialogProps) {
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
       try {
-        await uploadAndParseCV(formData);
-        // redirect happens server-side on success; dialog closes if we get here
+        const { id } = await uploadAndParseCV(formData);
         setOpen(false);
+        router.push(`/cv/${id}`);
       } catch (err) {
         toast.error("Error al subir el CV. Intentá de nuevo.");
         console.error(err);

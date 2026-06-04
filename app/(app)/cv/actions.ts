@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
@@ -61,7 +60,9 @@ export async function uploadAndParseCV(formData: FormData) {
   if (insertError) throw insertError;
 
   revalidatePath("/cv");
-  redirect(`/cv/${row.id}`);
+  // Navigate client-side so the server redirect doesn't surface as a caught
+  // error in the caller's try/catch.
+  return { id: row.id as string };
 }
 
 export async function updateCVContent(id: string, content: unknown) {

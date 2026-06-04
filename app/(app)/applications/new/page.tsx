@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ interface PreviewData {
 }
 
 export default function NewApplicationPage() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>("input");
   const [isPending, startTransition] = useTransition();
 
@@ -107,7 +109,7 @@ export default function NewApplicationPage() {
     if (!preview) return;
     startTransition(async () => {
       try {
-        await createApplication({
+        const { id } = await createApplication({
           companyName,
           positionTitle,
           platform,
@@ -121,7 +123,7 @@ export default function NewApplicationPage() {
           },
           markAsApplied,
         });
-        // redirect happens server-side
+        router.push(`/applications/${id}`);
       } catch {
         toast.error("Error al crear la postulación. Intentá de nuevo.");
       }

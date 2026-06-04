@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { TrashIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
@@ -25,14 +26,16 @@ export function DeleteApplicationButton({
   applicationId,
   companyName,
 }: DeleteApplicationButtonProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
     startTransition(async () => {
       try {
-        // Redirects to /applications on success.
         await deleteApplication({ applicationId });
+        toast.success("Postulación eliminada");
+        router.push("/applications");
       } catch {
         toast.error("No se pudo eliminar, probá de nuevo");
       }
