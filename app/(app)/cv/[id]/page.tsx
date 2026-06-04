@@ -35,7 +35,7 @@ export default async function CVDetailPage({
 
   return (
     <div className="space-y-4">
-      <h1 className="font-heading text-lg font-semibold">{cv.title}</h1>
+      <h1 className="font-heading text-2xl font-semibold tracking-tight">{cv.title}</h1>
       <CVEditor initialContent={content} onSave={save} />
     </div>
   );

@@ -223,6 +223,8 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
         </CardHeader>
         <CardContent>
           <Textarea
+            id="cv-summary"
+            aria-label="Resumen profesional"
             rows={4}
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
@@ -245,33 +247,35 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label>Empresa</Label>
-                  <Input value={exp.company} onChange={(e) => updateExperience(i, "company", e.target.value)} />
+                  <Label htmlFor={`exp-${i}-company`}>Empresa</Label>
+                  <Input id={`exp-${i}-company`} value={exp.company} onChange={(e) => updateExperience(i, "company", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Cargo</Label>
-                  <Input value={exp.title} onChange={(e) => updateExperience(i, "title", e.target.value)} />
+                  <Label htmlFor={`exp-${i}-title`}>Cargo</Label>
+                  <Input id={`exp-${i}-title`} value={exp.title} onChange={(e) => updateExperience(i, "title", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Inicio (YYYY-MM)</Label>
-                  <Input value={exp.start} onChange={(e) => updateExperience(i, "start", e.target.value)} />
+                  <Label htmlFor={`exp-${i}-start`}>Inicio (YYYY-MM)</Label>
+                  <Input id={`exp-${i}-start`} value={exp.start} onChange={(e) => updateExperience(i, "start", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Fin (YYYY-MM o vacío si es actual)</Label>
+                  <Label htmlFor={`exp-${i}-end`}>Fin (YYYY-MM o vacío si es actual)</Label>
                   <Input
+                    id={`exp-${i}-end`}
                     value={exp.end ?? ""}
                     onChange={(e) => updateExperience(i, "end", e.target.value || null)}
                     placeholder="Presente"
                   />
                 </div>
                 <div className="space-y-1 sm:col-span-2">
-                  <Label>Ubicación</Label>
-                  <Input value={exp.location ?? ""} onChange={(e) => updateExperience(i, "location", e.target.value)} />
+                  <Label htmlFor={`exp-${i}-location`}>Ubicación</Label>
+                  <Input id={`exp-${i}-location`} value={exp.location ?? ""} onChange={(e) => updateExperience(i, "location", e.target.value)} />
                 </div>
               </div>
               <div className="space-y-1">
-                <Label>Logros / responsabilidades (uno por línea)</Label>
+                <Label htmlFor={`exp-${i}-bullets`}>Logros / responsabilidades (uno por línea)</Label>
                 <Textarea
+                  id={`exp-${i}-bullets`}
                   rows={4}
                   value={exp.bullets.join("\n")}
                   onChange={(e) =>
@@ -301,20 +305,20 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label>Institución</Label>
-                  <Input value={edu.institution} onChange={(e) => updateEducation(i, "institution", e.target.value)} />
+                  <Label htmlFor={`edu-${i}-institution`}>Institución</Label>
+                  <Input id={`edu-${i}-institution`} value={edu.institution} onChange={(e) => updateEducation(i, "institution", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Título / carrera</Label>
-                  <Input value={edu.degree} onChange={(e) => updateEducation(i, "degree", e.target.value)} />
+                  <Label htmlFor={`edu-${i}-degree`}>Título / carrera</Label>
+                  <Input id={`edu-${i}-degree`} value={edu.degree} onChange={(e) => updateEducation(i, "degree", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Inicio</Label>
-                  <Input value={edu.start ?? ""} onChange={(e) => updateEducation(i, "start", e.target.value)} />
+                  <Label htmlFor={`edu-${i}-start`}>Inicio</Label>
+                  <Input id={`edu-${i}-start`} value={edu.start ?? ""} onChange={(e) => updateEducation(i, "start", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Fin</Label>
-                  <Input value={edu.end ?? ""} onChange={(e) => updateEducation(i, "end", e.target.value)} />
+                  <Label htmlFor={`edu-${i}-end`}>Fin</Label>
+                  <Input id={`edu-${i}-end`} value={edu.end ?? ""} onChange={(e) => updateEducation(i, "end", e.target.value)} />
                 </div>
               </div>
               <Button variant="ghost" size="sm" onClick={() => removeEducation(i)}>
@@ -338,15 +342,17 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
             <div key={key} className="space-y-2">
               {i > 0 && <Separator />}
               <div className="space-y-1">
-                <Label>Categoría</Label>
+                <Label htmlFor={`skill-${i}-category`}>Categoría</Label>
                 <Input
+                  id={`skill-${i}-category`}
                   value={sg.category}
                   onChange={(e) => updateSkillCategory(i, e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <Label>Habilidades (separadas por coma)</Label>
+                <Label htmlFor={`skill-${i}-items`}>Habilidades (separadas por coma)</Label>
                 <Input
+                  id={`skill-${i}-items`}
                   value={itemsText}
                   onChange={(e) => updateSkillItemsText(i, e.target.value)}
                 />
@@ -373,12 +379,12 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label>Idioma</Label>
-                  <Input value={lang.name} onChange={(e) => updateLanguage(i, "name", e.target.value)} />
+                  <Label htmlFor={`lang-${i}-name`}>Idioma</Label>
+                  <Input id={`lang-${i}-name`} value={lang.name} onChange={(e) => updateLanguage(i, "name", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Nivel</Label>
-                  <Input value={lang.level} onChange={(e) => updateLanguage(i, "level", e.target.value)} />
+                  <Label htmlFor={`lang-${i}-level`}>Nivel</Label>
+                  <Input id={`lang-${i}-level`} value={lang.level} onChange={(e) => updateLanguage(i, "level", e.target.value)} />
                 </div>
               </div>
               <Button variant="ghost" size="sm" onClick={() => removeLanguage(i)}>
@@ -403,16 +409,16 @@ export function CVEditor({ initialContent, onSave }: CVEditorProps) {
               {i > 0 && <Separator />}
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="space-y-1">
-                  <Label>Nombre</Label>
-                  <Input value={cert.name} onChange={(e) => updateCertification(i, "name", e.target.value)} />
+                  <Label htmlFor={`cert-${i}-name`}>Nombre</Label>
+                  <Input id={`cert-${i}-name`} value={cert.name} onChange={(e) => updateCertification(i, "name", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Emisor</Label>
-                  <Input value={cert.issuer ?? ""} onChange={(e) => updateCertification(i, "issuer", e.target.value)} />
+                  <Label htmlFor={`cert-${i}-issuer`}>Emisor</Label>
+                  <Input id={`cert-${i}-issuer`} value={cert.issuer ?? ""} onChange={(e) => updateCertification(i, "issuer", e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Año</Label>
-                  <Input value={cert.year ?? ""} onChange={(e) => updateCertification(i, "year", e.target.value)} />
+                  <Label htmlFor={`cert-${i}-year`}>Año</Label>
+                  <Input id={`cert-${i}-year`} value={cert.year ?? ""} onChange={(e) => updateCertification(i, "year", e.target.value)} />
                 </div>
               </div>
               <Button variant="ghost" size="sm" onClick={() => removeCertification(i)}>

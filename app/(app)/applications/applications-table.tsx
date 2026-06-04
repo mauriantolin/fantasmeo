@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -66,6 +67,8 @@ export function ApplicationsTable({ applications }: ApplicationsTableProps) {
     <div className="space-y-3">
       <div className="flex items-center gap-3">
         <Input
+          type="search"
+          aria-label="Buscar postulaciones por empresa o puesto"
           placeholder="Buscar por empresa o puesto..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -86,6 +89,9 @@ export function ApplicationsTable({ applications }: ApplicationsTableProps) {
             </p>
           ) : (
             <Table>
+              <TableCaption className="sr-only">
+                Listado de postulaciones
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Empresa</TableHead>

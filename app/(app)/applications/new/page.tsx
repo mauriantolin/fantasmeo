@@ -138,7 +138,7 @@ export default function NewApplicationPage() {
   if (step === "input") {
     return (
       <div className="mx-auto max-w-xl space-y-6">
-        <h1 className="font-heading text-lg font-semibold">Nueva postulación</h1>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Nueva postulación</h1>
 
         <div className="space-y-3">
           <Label htmlFor="url">URL del aviso</Label>
@@ -172,7 +172,7 @@ export default function NewApplicationPage() {
           </button>
 
           {showManual && (
-            <div className="space-y-3 rounded-none border border-border p-3">
+            <div className="space-y-3 rounded-lg border border-border p-3">
               <div className="space-y-1.5">
                 <Label htmlFor="platform">Plataforma</Label>
                 <Select value={platform} onValueChange={setPlatform} disabled={isPending}>
@@ -227,7 +227,7 @@ export default function NewApplicationPage() {
           >
             ← Volver
           </button>
-          <h1 className="font-heading text-lg font-semibold">Revisá los datos</h1>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">Revisá los datos</h1>
         </div>
 
         <div className="space-y-4">
@@ -307,7 +307,7 @@ export default function NewApplicationPage() {
           {preview.jdSummary.summary && (
             <div className="space-y-1.5">
               <Label>Resumen del puesto</Label>
-              <p className="rounded-none border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+              <p className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
                 {preview.jdSummary.summary}
               </p>
             </div>
@@ -319,7 +319,7 @@ export default function NewApplicationPage() {
               type="checkbox"
               checked={markAsApplied}
               onChange={(e) => setMarkAsApplied(e.target.checked)}
-              className="h-4 w-4 rounded-none border-border accent-primary"
+              className="size-4 rounded-sm border-border accent-primary"
               disabled={isPending}
             />
             <Label htmlFor="mark-applied" className="cursor-pointer">

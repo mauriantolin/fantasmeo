@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { ApplicationsTable } from "./applications-table";
+import { PageHeader } from "@/components/page-header";
 import type { ApplicationStatus } from "@/lib/types";
 
 interface ApplicationRow {
@@ -26,12 +27,14 @@ export default async function ApplicationsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-lg font-semibold">Postulaciones</h1>
-        <Button asChild size="sm">
-          <Link href="/applications/new">Nueva postulación</Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Postulaciones"
+        actions={
+          <Button asChild>
+            <Link href="/applications/new">Nueva postulación</Link>
+          </Button>
+        }
+      />
 
       {rows.length === 0 ? (
         <p className="py-12 text-center text-sm text-muted-foreground">

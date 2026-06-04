@@ -12,6 +12,7 @@ import { ProfileForm } from "./profile-form";
 import { GmailDisconnectButton } from "./gmail-disconnect-button";
 import { AddInviteForm } from "./add-invite-form";
 import { GmailToast } from "./gmail-toast";
+import { PageHeader } from "@/components/page-header";
 
 export default async function SettingsPage({
   searchParams,
@@ -61,7 +62,7 @@ export default async function SettingsPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-lg font-semibold">Configuración</h1>
+      <PageHeader title="Configuración" />
 
       <GmailToast status={gmailStatus} />
 

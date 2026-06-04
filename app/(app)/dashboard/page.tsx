@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmailReviewCard } from "@/components/email-review-card";
 import { Timeline } from "@/components/timeline";
+import { PageHeader } from "@/components/page-header";
 import type { ApplicationEvent } from "@/lib/types";
 import type { EmailReviewCardEmail } from "@/components/email-review-card";
 
@@ -123,7 +124,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-lg font-semibold">Dashboard</h1>
+      <PageHeader title="Dashboard" />
 
       {isEmpty ? (
         // ── Empty state ──────────────────────────────────────────────────────

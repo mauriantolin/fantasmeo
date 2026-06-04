@@ -54,15 +54,15 @@ export function Timeline({ events }: TimelineProps) {
 
             {/* content */}
             <div className={`min-w-0 ${isLast ? "pb-0" : "pb-5"}`}>
-              <p className="text-xs font-medium leading-7">{event.title}</p>
+              <p className="text-sm font-medium leading-7">{event.title}</p>
               {event.description && (
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-0.5 text-sm text-muted-foreground">
                   {event.description}
                 </p>
               )}
               <time
                 dateTime={event.occurred_at}
-                className="mt-0.5 block text-[10px] text-muted-foreground/70"
+                className="mt-0.5 block text-xs text-muted-foreground"
               >
                 {formatDistanceToNow(new Date(event.occurred_at), {
                   locale: es,

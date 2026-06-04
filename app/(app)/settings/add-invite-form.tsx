@@ -31,6 +31,7 @@ export function AddInviteForm() {
       <Input
         ref={inputRef}
         type="email"
+        aria-label="Correo electrónico para invitar"
         placeholder="email@ejemplo.com"
         disabled={isPending}
         className="flex-1"

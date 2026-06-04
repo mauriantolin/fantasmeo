@@ -73,7 +73,7 @@ export default async function ApplicationDetailPage({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-heading text-lg font-semibold">
+            <h1 className="font-heading text-2xl font-semibold tracking-tight">
               {application.company_name}
             </h1>
             <StatusBadge status={application.status} />
@@ -137,21 +137,21 @@ export default async function ApplicationDetailPage({
               <CardContent className="space-y-3 pt-4">
                 {jd.seniority && (
                   <div>
-                    <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Seniority
                     </p>
-                    <p className="text-xs">{jd.seniority}</p>
+                    <p className="text-sm">{jd.seniority}</p>
                   </div>
                 )}
 
                 {jd.required_skills.length > 0 && (
                   <div>
-                    <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Skills requeridos
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {jd.required_skills.map((s) => (
-                        <Badge key={s} variant="secondary" className="text-[10px]">
+                        <Badge key={s} variant="secondary" className="text-xs">
                           {s}
                         </Badge>
                       ))}
@@ -161,12 +161,12 @@ export default async function ApplicationDetailPage({
 
                 {jd.nice_to_have.length > 0 && (
                   <div>
-                    <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Deseables
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {jd.nice_to_have.map((s) => (
-                        <Badge key={s} variant="outline" className="text-[10px]">
+                        <Badge key={s} variant="outline" className="text-xs">
                           {s}
                         </Badge>
                       ))}
@@ -176,10 +176,10 @@ export default async function ApplicationDetailPage({
 
                 {jd.keywords.length > 0 && (
                   <div>
-                    <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Keywords
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {jd.keywords.join(", ")}
                     </p>
                   </div>
@@ -187,10 +187,10 @@ export default async function ApplicationDetailPage({
 
                 {jd.summary && (
                   <div>
-                    <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Resumen
                     </p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
+                    <p className="text-sm leading-relaxed text-muted-foreground">
                       {jd.summary}
                     </p>
                   </div>

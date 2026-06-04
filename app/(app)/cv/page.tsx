@@ -6,6 +6,7 @@ import { FilePdf } from "@phosphor-icons/react/dist/ssr";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import {
   Card,
   CardContent,
@@ -31,10 +32,7 @@ export default async function CVPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-lg font-semibold">Mis CVs</h1>
-        <UploadCVDialog />
-      </div>
+      <PageHeader title="Mis CVs" actions={<UploadCVDialog />} />
 
       {!cvs || cvs.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">

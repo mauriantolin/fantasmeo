@@ -34,10 +34,11 @@ export function AddNoteForm({ applicationId }: AddNoteFormProps) {
     <form onSubmit={handleSubmit} className="space-y-2">
       <Textarea
         ref={textareaRef}
+        aria-label="Escribir una nota"
         placeholder="Escribí una nota..."
         rows={3}
         disabled={isPending}
-        className="resize-none text-xs"
+        className="resize-none"
       />
       <Button type="submit" size="sm" disabled={isPending}>
         Agregar nota

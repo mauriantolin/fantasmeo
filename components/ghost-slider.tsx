@@ -5,10 +5,10 @@ import { getGhostBand, GHOST_BAND_LABELS } from "@/lib/ai/ghost-level";
 import type { GhostBand } from "@/lib/ai/ghost-level";
 
 const BAND_COLORS: Record<GhostBand, string> = {
-  honesto: "text-green-400",
-  maquillado: "text-yellow-400",
-  fantasma: "text-orange-400",
-  fantasma_total: "text-red-400",
+  honesto: "text-ghost-honesto",
+  maquillado: "text-ghost-maquillado",
+  fantasma: "text-ghost-fantasma",
+  fantasma_total: "text-ghost-fantasma-total",
 };
 
 const BAND_EMOJI_SIZE: Record<GhostBand, string> = {
@@ -51,6 +51,8 @@ export function GhostSlider({ value, onChange }: GhostSliderProps) {
         min={0}
         max={100}
         step={1}
+        aria-label="Nivel de fantasmeo"
+        aria-valuetext={`${GHOST_BAND_LABELS[band]}, ${value} de 100`}
       />
 
       <p className="text-xs text-muted-foreground">{BAND_DESCRIPTIONS[band]}</p>
