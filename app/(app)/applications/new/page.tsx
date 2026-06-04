@@ -16,17 +16,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { previewFromUrl, previewFromText, createApplication } from "../actions";
+import { PLATFORMS } from "@/lib/platforms";
 import type { JDSummary } from "@/lib/types";
 
 type Step = "input" | "preview";
-
-const PLATFORMS = [
-  "LinkedIn",
-  "Talent Connect",
-  "Indeed",
-  "Glassdoor",
-  "Otra",
-] as const;
 
 function inferPlatformFromUrl(rawUrl: string): string {
   try {

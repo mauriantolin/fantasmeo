@@ -130,6 +130,35 @@ export async function updateStatus(input: z.infer<typeof updateStatusInput>) {
   revalidatePath("/applications");
 }
 
+const updateApplicationInput = z.object({
+  applicationId: z.string().uuid(),
+  companyName: z.string().min(1),
+  positionTitle: z.string().min(1),
+  platform: z.string().min(1),
+  jobUrl: z.string().url().optional().or(z.literal("")),
+});
+
+export async function updateApplication(
+  input: z.infer<typeof updateApplicationInput>
+) {
+  const parsed = updateApplicationInput.parse(input);
+  const { supabase } = await requireUser();
+
+  const { error } = await supabase
+    .from("applications")
+    .update({
+      company_name: parsed.companyName,
+      position_title: parsed.positionTitle,
+      platform: parsed.platform,
+      job_url: parsed.jobUrl || null,
+    })
+    .eq("id", parsed.applicationId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/applications/${parsed.applicationId}`);
+  revalidatePath("/applications");
+}
+
 const addNoteInput = z.object({ applicationId: z.string().uuid(), note: z.string().min(1) });
 
 export async function addNote(input: z.infer<typeof addNoteInput>) {

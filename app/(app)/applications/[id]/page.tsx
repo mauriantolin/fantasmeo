@@ -17,6 +17,8 @@ import type { ApplicationRow, ApplicationEvent, CVContent } from "@/lib/types";
 import { StatusDropdown } from "./status-dropdown";
 import { AddNoteForm } from "./add-note-form";
 import { GenerationPanel } from "./generation-panel";
+import { EditApplicationDialog } from "./edit-application-dialog";
+import { DeleteApplicationButton } from "./delete-application-button";
 
 export default async function ApplicationDetailPage({
   params,
@@ -83,7 +85,7 @@ export default async function ApplicationDetailPage({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <StatusDropdown
             applicationId={application.id}
             currentStatus={application.status}
@@ -101,6 +103,17 @@ export default async function ApplicationDetailPage({
               </Link>
             </Button>
           )}
+          <EditApplicationDialog
+            applicationId={application.id}
+            companyName={application.company_name}
+            positionTitle={application.position_title}
+            platform={application.platform}
+            jobUrl={application.job_url}
+          />
+          <DeleteApplicationButton
+            applicationId={application.id}
+            companyName={application.company_name}
+          />
         </div>
       </div>
 

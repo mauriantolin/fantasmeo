@@ -15,6 +15,11 @@ function Tabs({
     <TabsPrimitive.Root
       data-slot="tabs"
       data-orientation={orientation}
+      // The class selectors below key off data-horizontal/data-vertical,
+      // but Radix only emits data-orientation — expose both so the
+      // orientation-based layout (and trigger heights) actually applies.
+      data-horizontal={orientation === "horizontal" ? "" : undefined}
+      data-vertical={orientation === "vertical" ? "" : undefined}
       className={cn(
         "group/tabs flex gap-2 data-horizontal:flex-col",
         className
